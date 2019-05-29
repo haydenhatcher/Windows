@@ -1,0 +1,18 @@
+# This will prevent the HTTPS -> HTTP -> HTTPS... infinite loop that occurs when you terminate SSL on the ALB but have http->https URL rewrites on the IIS server
+# Add as a URL rewrite at the Server Level
+
+<rewrite>
+	<globalRules>
+		<rule name="AWS ALB HTTPS PREVENT LOOP" patternSyntax="Wildcard">
+			<match url="*" />
+			<conditions>
+				<add input="{HTTP_X_FORWARDED_PROTO}" pattern="https" />
+			</conditions>
+			<serverVariables>
+				<set name="HTTPS" value="on" />
+				<set name="SERVER_PORT" value="443" />
+			</serverVariables>
+			<action type="None" />
+		</rule>
+	</globalRules>
+</rewrite>
